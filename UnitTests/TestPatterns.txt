@@ -1,0 +1,3 @@
+﻿test.?pattern              # Test Pattern
+party.?like.?it.?s.?/d{4}  # Party Like it's 1998
+#disabled-?pattern
