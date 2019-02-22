@@ -179,6 +179,9 @@ namespace BadMailForOutlook
             var patterns = new PatternCollection();
 
             var regEx = new Regex(@"<(?<link>https?://[a-z0-9\-]{1,20}\.[a-z]{2}/).*>");
+
+            if (body == null) return patterns;
+
             MatchCollection matches = regEx.Matches(body);
 
             foreach(Match match in matches)
