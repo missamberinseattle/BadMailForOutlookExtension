@@ -126,6 +126,7 @@
     <Reference Include="Accessibility" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -183,6 +184,12 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="EditRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditRuleForm.Designer.cs">
+      <DependentUpon>EditRuleForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IOleWindow.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ContextMenus.cs" />
@@ -208,6 +215,9 @@
       <DependentUpon>SpamResultsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SpamTypes.cs" />
+    <EmbeddedResource Include="EditRuleForm.resx">
+      <DependentUpon>EditRuleForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MailRejectionViewerForm.resx">
       <DependentUpon>MailRejectionViewerForm.cs</DependentUpon>
     </EmbeddedResource>

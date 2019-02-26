@@ -89,7 +89,7 @@
             this.toolStripMenuItem1,
             this.viewMailRejectionsToolStripMenuItem});
             this.ListViewContextMenu.Name = "ListViewContextMenu";
-            this.ListViewContextMenu.Size = new System.Drawing.Size(189, 98);
+            this.ListViewContextMenu.Size = new System.Drawing.Size(189, 76);
             // 
             // copyToolStripMenuItem
             // 

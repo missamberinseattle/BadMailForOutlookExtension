@@ -13,6 +13,7 @@ namespace BadMailForOutlook
         }
 
         public SpamLibraries SpamCollections { get; private set; }
+        public ListView ActiveListView { get; private set; }
 
         public static SpamLibraries DisplayForm(SpamLibraries spamCollections)
         {
@@ -93,19 +94,19 @@ namespace BadMailForOutlook
 
         private void ListView_MouseClick(object sender, MouseEventArgs e)
         {
-            var listView = (ListView)sender;
+            ActiveListView = (ListView)sender;
 
             if (e.Button == MouseButtons.Right)
             {
-                if (listView.FocusedItem.Bounds.Contains(e.Location))
+                if (ActiveListView.FocusedItem.Bounds.Contains(e.Location))
                 {
-                    ListViewContextMenu.Tag = listView;
+                    ListViewContextMenu.Tag = ActiveListView;
                     ListViewContextMenu.Show(Cursor.Position);
                 }
             }
             else if (e.Clicks == 2 && e.Button == MouseButtons.Left)
             {
-                ListViewContextMenu.Tag = listView;
+                ListViewContextMenu.Tag = ActiveListView;
                 editToolStripMenuItem_Click(this, EventArgs.Empty);
             }
         }
@@ -187,7 +188,19 @@ namespace BadMailForOutlook
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ListViewItem item = ActiveListView.SelectedItems[0];
 
+            var pattern = Pattern.FromRegEx(item.Text, item.SubItems[1].Text);
+            pattern.Enable = item.Checked;
+
+            var result = EditRuleForm.DisplayEditForm(pattern);
+
+            if (result != null)
+            {
+                item.Checked = pattern.Enable;
+                item.Text = pattern.Expression;
+                item.SubItems[1].Text = pattern.Sample;
+            }
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -211,6 +224,8 @@ namespace BadMailForOutlook
             }
 
             Clipboard.SetText(clipboard.ToString());
+
+            MessageBox.Show("Patterns copied to clipboard.", "Clipboard");
         }
 
         private void viewMailRejectionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -218,5 +233,6 @@ namespace BadMailForOutlook
             var rejections = new MailRejectionViewerForm();
             rejections.Show();
         }
+
     }
 }

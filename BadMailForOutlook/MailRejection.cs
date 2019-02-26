@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BadMailForOutlook
 {
-    public class MailRejection
+    public class MailRejection : IComparable
     {
         private static Regex _parseRegEx;
 
@@ -24,6 +21,9 @@ namespace BadMailForOutlook
         public string Rule { get; private set; }
         public string Sample { get; private set; }
         public string Match { get; private set; }
+
+        internal string LogFilePath { get; private set; }
+        internal int LogLine { get; private set; }
 
         public static List<MailRejection> LoadTimeRange(DateTime start)
         {
@@ -44,8 +44,8 @@ namespace BadMailForOutlook
             while (curDate <= end.Date)
             {
                 //AGMSService_20190122.log
-                var filePath = Path.Combine(BadMailAddIn.MailDataPath, "AGMSService_" + curDate.ToString("yyyyMMdd") + ".log");
-
+                var filePath = GetLogFilePath(curDate);
+                var lineIndex = 0;
                 using (TextReader reader = new StreamReader(filePath))
                 {
                     string line;
@@ -59,12 +59,20 @@ namespace BadMailForOutlook
                             break;
                         }
 
+                        lineIndex++;
+
                         if (!IsRejectionContains(line))
                         {
                             continue;
                         }
 
                         var rejection = Parse(line, curDate);
+
+                        if (rejection != null)
+                        {
+                            rejection.LogLine = lineIndex;
+                            rejection.LogFilePath = filePath;
+                        }
 
                         if (rejection != null && rejection.RejectedOn >= start && rejection.RejectedOn <= end)
                         {
@@ -134,6 +142,30 @@ namespace BadMailForOutlook
             }
 
             return result;
+        }
+
+        public int CompareTo(object obj)
+        {
+            var that = obj as MailRejection;
+
+            if (that == null)
+            {
+                throw new InvalidCastException("obj is not a MailRejection");
+            }
+
+            if (RejectedOn.CompareTo(that.RejectedOn) != 0) return RejectedOn.CompareTo(that.RejectedOn);
+            if (RuleGroup.CompareTo(that.RuleGroup) != 0) return RuleGroup.CompareTo(that.RuleGroup);
+            if (Rule.CompareTo(that.Rule) != 0) return Rule.CompareTo(that.Rule);
+            if (Match.CompareTo(that.Match) != 0) return Match.CompareTo(that.Match);
+            if (Reason.CompareTo(that.Reason) != 0) return Reason.CompareTo(that.Reason);
+            if (Source.CompareTo(that.Source) != 0) return Source.CompareTo(that.Source);
+
+            return 0;
+        }
+
+        public static string GetLogFilePath(DateTime logDate)
+        {
+            return Path.Combine(BadMailAddIn.MailDataPath, "AGMSService_" + logDate.ToString("yyyyMMdd") + ".log");
         }
     }
 

@@ -57,7 +57,20 @@ namespace BadMailForOutlook
             this.ribbon = ribbonUI;
         }
 
-        public void RibbonMenuClick(IRibbonControl control)
+        public void ViewRejectionsClick(IRibbonControl control)
+        {
+            dynamic activeWindow = BadMailAddIn.Session.Application.ActiveWindow();
+            IOleWindow win = activeWindow as IOleWindow;
+            IntPtr hWnd;
+
+            win.GetWindow(out hWnd);
+
+            IWin32Window window = Control.FromHandle(hWnd);
+
+            var form = new MailRejectionViewerForm();
+            form.Show(window);
+        }
+        public void QuickAnalysisClick(IRibbonControl control)
         {
             try
             {

@@ -14,14 +14,25 @@
       <button
           id="QuickAnalysis"
           label="Bad Mail Analysis"
-          onAction="RibbonMenuClick" 
+          onAction="QuickAnalysisClick" 
                 />
+      <button
+          id="ViewRejections"
+          label="View Mail Rejections"
+          onAction="ViewRejectionsClick" 
+                />
+    
     </contextMenu>
     <contextMenu idMso="ContextMenuMultipleItems">
       <button
           id="MultiQuickAnalysis"
           label="Bad Mail Analysis"
-          onAction="RibbonMenuClick"
+          onAction="QuickAnalysisClick"
+                />
+        <button 
+          id="MultiViewRejections"
+          label="View Mail Rejections"
+          onAction="ViewRejectionsClick" 
                 />
     </contextMenu>
   </contextMenus>
