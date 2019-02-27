@@ -172,6 +172,8 @@ namespace BadMailForOutlook
 
                 logDate = logDate.AddDays(1);
             }
+
+            TextViewerForm.DisplayForm(output.ToString(), "Log Entry");
         }
 
         private void editRuleToolStripMenuItem_Click(object sender, EventArgs e)

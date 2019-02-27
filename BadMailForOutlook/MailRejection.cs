@@ -20,7 +20,6 @@ namespace BadMailForOutlook
         public string Source { get; private set; }
         public string Rule { get; private set; }
         public string Sample { get; private set; }
-        public string Match { get; private set; }
 
         internal string LogFilePath { get; private set; }
         internal int LogLine { get; private set; }
@@ -156,7 +155,6 @@ namespace BadMailForOutlook
             if (RejectedOn.CompareTo(that.RejectedOn) != 0) return RejectedOn.CompareTo(that.RejectedOn);
             if (RuleGroup.CompareTo(that.RuleGroup) != 0) return RuleGroup.CompareTo(that.RuleGroup);
             if (Rule.CompareTo(that.Rule) != 0) return Rule.CompareTo(that.Rule);
-            if (Match.CompareTo(that.Match) != 0) return Match.CompareTo(that.Match);
             if (Reason.CompareTo(that.Reason) != 0) return Reason.CompareTo(that.Reason);
             if (Source.CompareTo(that.Source) != 0) return Source.CompareTo(that.Source);
 
