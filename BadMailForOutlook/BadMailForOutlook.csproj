@@ -193,6 +193,8 @@
     <Compile Include="IOleWindow.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ContextMenus.cs" />
+    <Compile Include="RuleGroup.cs" />
+    <Compile Include="RuleGroupConfigMap.cs" />
     <Compile Include="TextViewerForm.cs">
       <SubType>Form</SubType>
     </Compile>

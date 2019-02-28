@@ -95,6 +95,11 @@ namespace BadMailForOutlook
             return result;
         }
 
+        public void MarkDirty()
+        {
+            _isDirty = true;
+        }
+
         public void Save()
         {
             if (!_isDirty) return;
@@ -175,6 +180,15 @@ namespace BadMailForOutlook
             }
 
             return collection;
+        }
+
+        public Pattern Find(string expression)
+        {
+            var pattern = (from p in this
+                           where p.Expression == expression
+                           select p).FirstOrDefault();
+
+            return pattern;
         }
     }
 }

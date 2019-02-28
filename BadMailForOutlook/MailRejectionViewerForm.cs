@@ -126,7 +126,7 @@ namespace BadMailForOutlook
 
         private void disableRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DisableRule(RejectionGrid.SelectedRows);
+            DisableRule();
         }
         #endregion
 
@@ -178,7 +178,7 @@ namespace BadMailForOutlook
 
         private void editRuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditRule(RejectionGrid.SelectedRows);
+            EditRule();
         }
         #endregion
 
@@ -186,15 +186,55 @@ namespace BadMailForOutlook
 
 
         #region Helper Methods
-        private void EditRule(DataGridViewSelectedRowCollection selectedRows)
+        private void EditRule()
         {
-            NotYetImplemented();
+            var rejection = GetRejectionFromGrid();
+            var map = RuleGroupConfigMap.Instance;
+
+            var filePath = Path.Combine(BadMailAddIn.MailDataPath, map.GetFile(rejection.RuleGroup));
+
+            var patterns = new PatternCollection(filePath);
+
+            var pattern = patterns.Find(rejection.Rule);
+
+            if (pattern == null)
+            {
+                MessageBox.Show("Could not find rule in the configuration files", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var newPattern = EditRuleForm.DisplayEditForm(pattern);
+
+            if (newPattern == null) return;
+
+            patterns.Remove(pattern);
+            patterns.Add(newPattern);
+            
+            patterns.Save();
         }
 
 
-        private void DisableRule(DataGridViewSelectedRowCollection selectedRows)
+        private void DisableRule()
         {
-            NotYetImplemented();
+            var rejection = GetRejectionFromGrid();
+            var map = RuleGroupConfigMap.Instance;
+
+            var filePath = Path.Combine(BadMailAddIn.MailDataPath, map.GetFile(rejection.RuleGroup));
+
+            var patterns = new PatternCollection(filePath);
+
+            var pattern = patterns.Find(rejection.Rule);
+
+            if (pattern == null)
+            {
+                MessageBox.Show("Could not find rule in the configuration files", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            pattern.Enable = false;
+            patterns.MarkDirty();
+
+            patterns.Save();
         }
 
         private bool IsOnlyRowOneSelected()

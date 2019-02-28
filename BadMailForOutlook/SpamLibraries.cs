@@ -91,7 +91,7 @@ namespace BadMailForOutlook
 
         private static string GetSpamLibaryPath(string file)
         {
-            return Path.Combine(@"C:\Users\zooadmin\Dropbox\MailData", file);
+            return Path.Combine(BadMailAddIn.MailDataPath, file);
         }
     }
 }
