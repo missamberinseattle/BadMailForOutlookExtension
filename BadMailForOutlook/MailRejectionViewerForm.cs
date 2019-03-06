@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace BadMailForOutlook
 {
@@ -17,6 +19,8 @@ namespace BadMailForOutlook
 
         private void LoadRejections()
         {
+            StripLabelRejectionCount.Text = "";
+            StripLabelMessage.Text = "";
             try
             {
                 Rejections = MailRejection.LoadTimeRange(DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)));
@@ -45,6 +49,19 @@ namespace BadMailForOutlook
 
         #region Public Properties
         public List<MailRejection> Rejections { get; private set; }
+
+        public MailRejection SelectedRejection
+        {
+            get
+            {
+                if (RejectionGrid.SelectedRows.Count == 0)
+                {
+                    return null;
+                }
+
+                return Rejections[RejectionGrid.SelectedRows[0].Index];
+            }
+        }
         #endregion
 
         #region Event Handlers
@@ -59,41 +76,70 @@ namespace BadMailForOutlook
         #endregion
 
         #region RejectionGrid Events
-        private void RejectionGrid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void RejectionGrid_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                var onlyOne = IsOnlyRowOneSelected();
-                editRuleToolStripMenuItem.Enabled = onlyOne;
-                viewLogEntryToolStripMenuItem.Enabled = onlyOne;
+                var htEvent = RejectionGrid.HitTest(e.X, e.Y);
+                               
+                if (htEvent.RowIndex == -1) return;
+
+                RejectionGrid.ClearSelection();
+                RejectionGrid.Rows[htEvent.RowIndex].Selected = true;
+
+                var reject = SelectedRejection;
+
+                editRuleToolStripMenuItem.Enabled = true;
+                viewLogEntryToolStripMenuItem.Enabled = true;
+
+                disableRuleToolStripMenuItem.Visible = ( reject.RuleGroup != "CheckHost");
+                whiteListHostToolStripMenuItem.Visible = !disableRuleToolStripMenuItem.Visible;
                 GridContext.Show(MousePosition);
             }
         }
-
-        private void RejectionGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void whiteListHostToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //var colIndex = e.ColumnIndex;
-            //var curSortedCol = RejectionGrid.SortedColumn;
-            //RejectionGrid.Columns[colIndex].SortMode = DataGridViewColumnSortMode.Programmatic;
+            var rejection = SelectedRejection;
 
-            //if (curSortedCol == null || curSortedCol.Index != colIndex)
-            //{
-            //    RejectionGrid.Sort(RejectionGrid.Columns[colIndex], ListSortDirection.Ascending);
-            //}
-            //else if (RejectionGrid.SortOrder == SortOrder.Ascending)
-            //{
-            //    RejectionGrid.Sort(RejectionGrid.Columns[colIndex], ListSortDirection.Descending);
-            //}
-            //else if (RejectionGrid.SortOrder == SortOrder.Descending)
-            //{
-            //    RejectionGrid.Columns[colIndex].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
+            //  { 207.211.34.125/r125.mail.fullbeauty.com;  -; None; 2; 5/20/2017 7:33:58 AM; 5/22/2017 7:58:05 AM }
+            var spamIpXml = new XmlDocument();
+            var filePath = Path.Combine(BadMailAddIn.MailDataPath, "spam-ip-catalog.xml");
+
+            spamIpXml.Load(filePath);
+
+            // <catalog>
+            // <ip address="10.193.39.9" messageCount="2" firstSeen="12/29/2014 7:22:52 AM" lastSeen="12/29/2014 7:22:36 PM" host="10.193.39.9" state="None" modified="10/29/2018 10:41:42 PM" />
+
+            string ip = null;
+            try
+            {
+                ip = Regex.Match(rejection.Rule, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", RegexOptions.IgnorePatternWhitespace).Value;
+            }
+            catch (ArgumentException ex)
+            {
+                Trace.WriteLine(ex.ToString());
+            }
+
+            if (ip == null)
+            {
+                SetStatus("Couuld not find IP address in rule");
+                return;
+            }
+
+            // XPath query //catalog/ip[@address='1.163.149.184']
+
+            XmlNode ipNode = spamIpXml.SelectSingleNode("//catalog/ip[@address='" + ip + "']");
+            if (ipNode == null)
+            {
+                SetStatus("Could not find IP address in spam XML");
+                return;
+            }
+
+            ipNode.Attributes["state"].Value = "WhiteList";
+
+            spamIpXml.Save(filePath);
         }
 
-        private void MailRejectionViewerForm_Resize(object sender, EventArgs e)
-        {
-            //RejectionGrid.Dock = DockStyle.Fill;
-        }
         #endregion
 
         #region Window Menu Events
@@ -130,7 +176,7 @@ namespace BadMailForOutlook
         }
         #endregion
 
-        #region Context Menue Events
+        #region Context Menu Events
         private void ViewMailLogEntry(DataGridViewSelectedCellCollection selectedCells)
         {
             var rowIndex = selectedCells[0].RowIndex;
@@ -184,8 +230,11 @@ namespace BadMailForOutlook
 
         #endregion
 
-
         #region Helper Methods
+        private void SetStatus(string text)
+        {
+            StripLabelMessage.Text = text;
+        }
         private void EditRule()
         {
             var rejection = GetRejectionFromGrid();
@@ -271,5 +320,6 @@ namespace BadMailForOutlook
             MessageBox.Show("Not yet implemented.", "Not done yet!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
         }
         #endregion
+
     }
 }

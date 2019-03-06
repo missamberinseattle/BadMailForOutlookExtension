@@ -49,6 +49,8 @@
             this.editRuleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.disableRuleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.whiteListHostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.StripLabelMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RejectionGrid)).BeginInit();
             this.Status.SuspendLayout();
@@ -145,13 +147,13 @@
             this.RejectionGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.RejectionGrid.Size = new System.Drawing.Size(800, 426);
             this.RejectionGrid.TabIndex = 1;
-            this.RejectionGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.RejectionGrid_CellMouseClick);
-            this.RejectionGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.RejectionGrid_ColumnHeaderMouseClick);
+            this.RejectionGrid.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RejectionGrid_MouseClick);
             // 
             // Status
             // 
             this.Status.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.StripLabelRejectionCount});
+            this.StripLabelRejectionCount,
+            this.StripLabelMessage});
             this.Status.Location = new System.Drawing.Point(0, 428);
             this.Status.Name = "Status";
             this.Status.Size = new System.Drawing.Size(800, 22);
@@ -161,7 +163,8 @@
             // StripLabelRejectionCount
             // 
             this.StripLabelRejectionCount.Name = "StripLabelRejectionCount";
-            this.StripLabelRejectionCount.Size = new System.Drawing.Size(0, 17);
+            this.StripLabelRejectionCount.Size = new System.Drawing.Size(141, 17);
+            this.StripLabelRejectionCount.Text = "StripLabelRejectionCount";
             // 
             // GridContext
             // 
@@ -171,9 +174,10 @@
             this.viewLogEntryToolStripMenuItem,
             this.editRuleToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.disableRuleToolStripMenuItem});
+            this.disableRuleToolStripMenuItem,
+            this.whiteListHostToolStripMenuItem});
             this.GridContext.Name = "GridContext";
-            this.GridContext.Size = new System.Drawing.Size(159, 104);
+            this.GridContext.Size = new System.Drawing.Size(159, 126);
             // 
             // openLogFileToolStripMenuItem
             // 
@@ -213,6 +217,21 @@
             this.disableRuleToolStripMenuItem.Text = "&Disable rule... ";
             this.disableRuleToolStripMenuItem.Click += new System.EventHandler(this.disableRuleToolStripMenuItem_Click);
             // 
+            // whiteListHostToolStripMenuItem
+            // 
+            this.whiteListHostToolStripMenuItem.Name = "whiteListHostToolStripMenuItem";
+            this.whiteListHostToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.whiteListHostToolStripMenuItem.Text = "&White list host...";
+            this.whiteListHostToolStripMenuItem.Click += new System.EventHandler(this.whiteListHostToolStripMenuItem_Click);
+            // 
+            // StripLabelMessage
+            // 
+            this.StripLabelMessage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.StripLabelMessage.Name = "StripLabelMessage";
+            this.StripLabelMessage.Size = new System.Drawing.Size(644, 17);
+            this.StripLabelMessage.Spring = true;
+            this.StripLabelMessage.Text = "StripLabelMessage";
+            // 
             // MailRejectionViewerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -226,7 +245,6 @@
             this.Name = "MailRejectionViewerForm";
             this.Text = "Mail Rejections";
             this.VisibleChanged += new System.EventHandler(this.MailRejectionViewerForm_VisibleChanged);
-            this.Resize += new System.EventHandler(this.MailRejectionViewerForm_Resize);
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RejectionGrid)).EndInit();
@@ -256,5 +274,7 @@
         private System.Windows.Forms.ToolStripMenuItem disableRuleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLogFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem whiteListHostToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel StripLabelMessage;
     }
 }
