@@ -34,8 +34,11 @@ namespace BadMailForOutlook
     [ComVisible(true)]
     public class ContextMenus : IRibbonExtensibility
     {
+        #region Private Data Members
         private IRibbonUI ribbon;
+        #endregion
 
+        #region Constructors, Destructors, and Initializers
         public ContextMenus()
         {
         }
@@ -47,6 +50,7 @@ namespace BadMailForOutlook
             return GetResourceText("BadMailForOutlook.ContextMenus.xml");
         }
 
+        #endregion
         #endregion
 
         #region Ribbon Callbacks
@@ -77,24 +81,42 @@ namespace BadMailForOutlook
                 var selection = control.Context as Selection;
 
                 var mailItems = selection.OfType<MailItem>().ToList();
-                SpamLibraries patternCollections;
 
-                MailAnalyzer.ProcessItems(mailItems, out patternCollections);
+                MailAnalyzer.ProcessItems(mailItems, out SpamLibraries patternCollections);
             }
             catch (System.Exception ex)
             {
-                
+
                 var errorOut = new StringBuilder();
                 errorOut.AppendLine(DateTime.Now.ToString("G"));
                 errorOut.AppendLine(ex.ToString());
                 errorOut.AppendLine();
 
                 BadMailAddIn.LogError(errorOut.ToString());
-                
+
 
                 MessageBox.Show("Encountered unhandled exception. Details have been logged to " + BadMailAddIn.LogFilePath);
             }
             Trace.WriteLine($"RibbonMenuClick control: {control} type {control?.GetType().Name ?? "(null)"}");
+        }
+
+        public void ViewMailHeadersClick(IRibbonControl control)
+        {
+            var selection = control.Context as Selection;
+
+            var item = selection.OfType<MailItem>().ToList().FirstOrDefault();
+
+            if (item == null)
+            {
+                return;
+            }
+
+            var output = new StringBuilder();
+            output.Append(item.HeaderString());
+
+            var fromSubject = item.SenderName + " <" + item.SenderEmailAddress + ">/" + item.Subject;
+            TextViewerForm.DisplayForm(output.ToString(), fromSubject);
+
         }
         #endregion
 

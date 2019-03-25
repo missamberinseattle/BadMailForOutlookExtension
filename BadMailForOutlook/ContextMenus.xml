@@ -11,14 +11,22 @@
   </ribbon>-->
   <contextMenus>
     <contextMenu idMso="ContextMenuMailItem">
+      <menuSeparator 
+          id="Sep1" 
+      />
+      <button 
+          id="ViewHeaders"
+          label="View E-mail Headers..."
+          onAction="ViewMailHeadersClick"
+      />
       <button
           id="QuickAnalysis"
-          label="Bad Mail Analysis"
+          label="Bad Mail Analysis..."
           onAction="QuickAnalysisClick" 
                 />
       <button
           id="ViewRejections"
-          label="View Mail Rejections"
+          label="View Mail Rejections..."
           onAction="ViewRejectionsClick" 
                 />
     
@@ -26,12 +34,12 @@
     <contextMenu idMso="ContextMenuMultipleItems">
       <button
           id="MultiQuickAnalysis"
-          label="Bad Mail Analysis"
+          label="Bad Mail Analysis..."
           onAction="QuickAnalysisClick"
                 />
         <button 
           id="MultiViewRejections"
-          label="View Mail Rejections"
+          label="View Mail Rejections..."
           onAction="ViewRejectionsClick" 
                 />
     </contextMenu>

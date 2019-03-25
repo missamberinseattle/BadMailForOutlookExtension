@@ -86,6 +86,10 @@ namespace BadMailForOutlook
                 {
                     senders.Add(item);
                 }
+                catch (System.Exception)
+                {
+                    throw;
+                }
             }
 
             for (var xx = 0; xx < senders.Count; xx++)
@@ -177,14 +181,48 @@ namespace BadMailForOutlook
         {
             var body = _item.Body;
             var patterns = new PatternCollection();
-
-            var regEx = new Regex(@"<(?<link>https?://[a-z0-9\-]{1,20}\.[a-z]{2}/).*>");
-
             if (body == null) return patterns;
+
+            patterns.AddRange(GetShortTLDLinks(body));
+            patterns.AddRange(GetAllUrls(body));
+
+            return patterns;
+        }
+
+        private PatternCollection GetAllUrls(string body)
+        {
+            var patterns = new PatternCollection();
+            // 
+
+            var regEx = new Regex(@"<(?<link>https?://.*?)>");
 
             MatchCollection matches = regEx.Matches(body);
 
-            foreach(Match match in matches)
+            foreach (Match match in matches)
+            {
+                var value = match.Groups["link"];
+                var href = value.Value;
+
+                var pattern = Pattern.FromRegEx(href, href);
+
+                if (!patterns.Contains(pattern))
+                {
+                    patterns.Add(pattern);
+                }
+            }
+
+            return patterns;
+        }
+
+        private PatternCollection GetShortTLDLinks(string body)
+        {
+            var patterns = new PatternCollection();
+
+            var regEx = new Regex(@"<(?<link>https?://[a-z0-9\-]{1,20}\.[a-z]{2}/).*>");
+
+            MatchCollection matches = regEx.Matches(body);
+
+            foreach (Match match in matches)
             {
                 var value = match.Groups["link"];
                 var href = value.Value;
@@ -221,8 +259,8 @@ namespace BadMailForOutlook
             };
 
             var patterns = new PatternCollection();
-            
-            foreach(var host in hosts)
+
+            foreach (var host in hosts)
             {
                 var pattern = Pattern.FromText(host);
 
@@ -259,7 +297,7 @@ namespace BadMailForOutlook
 
             var patterns = new PatternCollection();
 
-            foreach(var host in hosts)
+            foreach (var host in hosts)
             {
                 // Chameleon host vortex33
                 var foundMatch = Regex.IsMatch(host, @"\b[a-z]{1,50}\d{1,50}\.[a-z0-9]*\.[a-z]{2,20}\b");
@@ -349,6 +387,8 @@ namespace BadMailForOutlook
 
         public static Pattern GetSpamSubject(string subject)
         {
+            if (subject == null) subject = string.Empty;
+
             Pattern result = null;
             var sample = subject;
 

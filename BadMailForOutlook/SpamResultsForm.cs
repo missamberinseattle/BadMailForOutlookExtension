@@ -82,13 +82,28 @@ namespace BadMailForOutlook
             foreach (var pattern in patternCollection)
             {
                 var lvItem = new ListViewItem();
-                lvItem.Checked = pattern.Enable;
-                lvItem.Text = pattern.Expression;
-                // lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.Expression });
-                lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.Sample });
-                lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.GetWarnings() });
 
-                listView.Items.Add(lvItem);
+                if (pattern != null)
+                {
+                    var warnings = pattern.GetWarnings();
+
+                    if (warnings != null && warnings.Length > 0)
+                    {
+                        lvItem.Checked = false;
+                    }
+                    else
+                    {
+                        lvItem.Checked = pattern.Enable;
+                    }
+
+                    //lvItem.Checked = pattern.Enable;
+                    lvItem.Text = pattern.Expression;
+                    // lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.Expression });
+                    lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.Sample });
+                    lvItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = pattern.GetWarnings() });
+
+                    listView.Items.Add(lvItem);
+                }
             }
         }
 
