@@ -205,6 +205,11 @@ namespace BadMailForOutlook
 
                 var pattern = Pattern.FromRegEx(href, href);
 
+                if (href.EndsWithAny(new[] {".png", ".jpg", ".gif" }))
+                {
+                    pattern.Enable = false;
+                }
+
                 if (!patterns.Contains(pattern))
                 {
                     patterns.Add(pattern);

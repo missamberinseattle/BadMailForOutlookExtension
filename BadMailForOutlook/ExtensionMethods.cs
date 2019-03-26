@@ -1,4 +1,6 @@
 ﻿using Microsoft.Office.Interop.Outlook;
+using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +11,45 @@ namespace BadMailForOutlook
     public static class ExtensionMethods
     {
         #region String Extension Methods
+        public static bool EndsWithAny(this string text, string[] endings)
+        {
+            foreach(var ending in endings)
+            {
+                if (text.EndsWith(text))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool EndsWithAny(this string text, string[] endings, StringComparison comparisonType)
+        {
+            foreach (var ending in endings)
+            {
+                if (text.EndsWith(text, comparisonType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool EndsWithAny(this string text, string[] endings, bool ignoreCase, CultureInfo cultureInfo)
+        {
+            foreach (var ending in endings)
+            {
+                if (text.EndsWith(text, ignoreCase, cultureInfo))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static int WordCount(this string text)
         {
             string pattern = "[^\\w]";

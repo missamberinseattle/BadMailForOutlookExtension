@@ -100,6 +100,43 @@ namespace BadMailForOutlook
             Trace.WriteLine($"RibbonMenuClick control: {control} type {control?.GetType().Name ?? "(null)"}");
         }
 
+        public void ViewMailBodyClick(IRibbonControl control)
+        {
+            var selection = control.Context as Selection;
+
+            var item = selection.OfType<MailItem>().ToList().FirstOrDefault();
+
+            if (item == null)
+            {
+                return;
+            }
+
+            var body = new StringBuilder();
+
+            if (item.HTMLBody != null && item.HTMLBody.Length > 0)
+            {
+                body.Append(item.HTMLBody);
+            }
+
+            //if (item.RTFBody != null && item.RTFBody.Length > 0)
+            //{
+            //    if (body.Length > 0) body.AppendLine("-------------------");
+
+            //    body.AppendLine(Encoding.UTF8.GetString( item.RTFBody));
+            //}
+
+            if (item.Body != null && item.Body.Length > 0)
+            {
+                if (body.Length > 0) body.AppendLine("-------------------");
+
+                body.Append(item.Body);
+            }
+
+            var fromSubject = item.SenderName + " <" + item.SenderEmailAddress + ">/" + item.Subject;
+            TextViewerForm.DisplayForm(body.ToString(), fromSubject);
+        }
+
+
         public void ViewMailHeadersClick(IRibbonControl control)
         {
             var selection = control.Context as Selection;

@@ -20,6 +20,11 @@
           onAction="ViewMailHeadersClick"
       />
       <button
+          id="ViewBody"
+          label="View E-mail Body..."
+          onAction="ViewMailBodyClick"
+      />
+      <button
           id="QuickAnalysis"
           label="Bad Mail Analysis..."
           onAction="QuickAnalysisClick" 
